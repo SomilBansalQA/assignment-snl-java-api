@@ -235,3 +235,108 @@ public class TestBoard {
 	
 		}
 	
+	
+	
+	
+		@Test(priority=12)
+		public void isPlayerClimbedTest() throws FileNotFoundException, UnsupportedEncodingException, IOException,
+				PlayerExistsException, GameInProgressException, MaxPlayersReachedExeption, InvalidTurnException {
+
+			Board board4 = new Board();
+
+			board4.registerPlayer("Shivam");
+			board4.registerPlayer("Mohit");
+			board4.registerPlayer("Shubham");
+			board4.registerPlayer("Rajeev");
+			
+			for (int value = 1; value < 7; value++) {
+				JSONObject step =  board4.getData().getJSONArray("steps").getJSONObject(value);
+				step.put("type", 2);
+				step.put("target", value*5);
+			}
+			
+			System.out.println(board4.getData().getJSONArray("steps").toString());
+			for (int i = 0; i < 4; i++) {
+				int turn = (int) board4.getData().get("turn");
+				JSONObject player = board4.getData().getJSONArray("players").getJSONObject(turn);
+				UUID uuid = UUID.fromString(player.get("uuid").toString());
+
+
+				Integer playerPositionBeforeRollDice = player.getInt("position");
+				
+				JSONObject response = board4.rollDice(uuid);
+
+				int playerPositionAfterRollDice = player.getInt("position");
+				
+				System.out.println("playerPositionBeforeRollDice " + playerPositionBeforeRollDice);
+				System.out.println(response.get("dice"));
+				System.out.println("playerPositionAfterRollDice" + playerPositionAfterRollDice);
+				System.out.println(response.get("message"));
+				System.out.println("\n");
+				
+							
+				assertThat(board4.data.getJSONArray("steps").getJSONObject((int) response.get("dice")).get("target"))
+						.isEqualTo(playerPositionAfterRollDice);
+			}
+
+		}
+
+	
+	
+		@Test(priority=13)
+	public void SnakeTest() throws FileNotFoundException, UnsupportedEncodingException, IOException,
+				PlayerExistsException, GameInProgressException, MaxPlayersReachedExeption, InvalidTurnException {
+		Board board5 = new Board();
+
+		board5.registerPlayer("Shivam");
+		board5.registerPlayer("Mohit");
+		board5.registerPlayer("Shubham");
+		board5.registerPlayer("Rajeev");
+		
+		JSONObject data = board.getData();
+		JSONArray playerArray = data.getJSONArray("players");
+		for (int index = 0; index <board5.getData().getJSONArray("players").length(); index++) {
+			board5.getData().getJSONArray("players").getJSONObject(index).put("position", 70);
+		}
+
+		System.out.println(	board5.getData().getJSONArray("players"));
+	
+	
+		int counter=1;
+		for (int value = 71; value < 80; value++) {
+			JSONObject step =  board5.getData().getJSONArray("steps").getJSONObject(value);
+			step.put("type", 1);
+			step.put("target", value/5 +counter);
+			counter++;
+		}
+			for (int i = 71; i < 80; i++) {
+				System.out.println(board5.data.getJSONArray("steps").getJSONObject(i).get("target"));
+			}
+	
+	for (int i = 0; i < 4; i++) {
+		int turn = (int) board5.getData().get("turn");
+		JSONObject player = board5.getData().getJSONArray("players").getJSONObject(turn);
+		UUID uuid = UUID.fromString(player.get("uuid").toString());
+
+
+		Integer playerPositionBeforeRollDice = player.getInt("position");
+		
+		JSONObject response = board5.rollDice(uuid);
+
+		int playerPositionAfterRollDice = player.getInt("position");
+		
+		System.out.println("playerPositionBeforeRollDice " + playerPositionBeforeRollDice);
+		System.out.println(response.get("dice"));
+		System.out.println("playerPositionAfterRollDice" + playerPositionAfterRollDice);
+		System.out.println(response.get("message"));
+		System.out.println("\n");
+		
+					
+		assertThat(board5.getData().getJSONArray("steps").getJSONObject(((int) response.get("dice"))+70).get("target"))
+				.isEqualTo(playerPositionAfterRollDice);
+	}
+
+		}
+	
+}
+	
